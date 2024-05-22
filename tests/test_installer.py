@@ -1,7 +1,7 @@
 import unittest
 import os
 import shutil
-from mylibrary.installer import create_django_project, create_django_app, update_settings
+from setup_django_apex.installer import create_django_project, create_django_app, update_settings
 
 class TestInstaller(unittest.TestCase):
     @classmethod

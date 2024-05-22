@@ -5,17 +5,17 @@ import subprocess
 class CustomInstallCommand(install):
     def run(self):
         install.run(self)
-        subprocess.check_call(['python', '-m', 'mylibrary.installer'])
+        subprocess.check_call(['python', '-m', 'setup_django_apex.installer'])
 
 setup(
-    name='setup_django',
+    name='setup_django_apex',
     version='0.1.0',
     author='Anirudha Udgirkar',
     author_email='anirudhaudgirkar.work.email@example.com',
     description='A library to set up Django projects with multiple apps',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
-    url='https://github.com/yourusername/mylibrary',
+    url='https://github.com/Anirudha1821/setup_django_apex',
     packages=find_packages(),
     classifiers=[
         'Programming Language :: Python :: 3',

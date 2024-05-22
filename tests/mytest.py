@@ -1,8 +1,9 @@
 import os
 import subprocess
 import unittest
-from mylibrary.installer import create_django_project, create_django_app, update_settings
-
+import sys
+sys.path.append("c:\\Users\\omani\\OneDrive\\Documents\\django_pip")
+from setup_django_apex.installer import create_django_project, create_django_app, update_settings
 class TestInstaller(unittest.TestCase):
     def setUp(self):
         # Set up any resources needed for the tests
