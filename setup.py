@@ -9,7 +9,7 @@ class CustomInstallCommand(install):
 
 setup(
     name='setup_django_apex',
-    version='0.1.0',
+    version='0.1.4',
     author='Anirudha Udgirkar',
     author_email='anirudhaudgirkar.work.email@example.com',
     description='A library to set up Django projects with multiple apps',
@@ -25,7 +25,8 @@ setup(
     python_requires='>=3.6',
     install_requires=[
         'Django>=3.0',
-    ],
+        'django>=3.0',
+    ], 
     extras_require={
         'tests': ['pytest'],
     },
