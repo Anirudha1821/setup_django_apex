@@ -1,0 +1,3 @@
+.pytest_cache/
+mylibrary.egg-info/
+test_project/
