@@ -1,2 +1,0 @@
-setup_django_apex
-tests

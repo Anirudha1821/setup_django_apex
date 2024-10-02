@@ -1,80 +1,97 @@
 import os
 import subprocess
-import django
-import sys
 
-def run_command(command):
-    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout, stderr = process.communicate()
-    if process.returncode != 0:
-        raise Exception(f"Command failed with error: {stderr.decode('utf-8')}")
-    return stdout.decode('utf-8')
-
-def create_django_project(project_name):
-    print("pppppppppppppppppppppppppppppppppppppppp")
-    run_command(f'django-admin startproject {project_name}')
-    print("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq")
-    print("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq")
-    print("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq")
-    print(os.getcwd())
-    print(django.get_version())
-    print("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq")
+def create_django_project():
+    project_name = input("Enter the name of the Django project: ")
+    subprocess.run(["django-admin", "startproject", project_name])
+    
+    # Change to the project directory
     os.chdir(project_name)
-    print(os.getcwd())
+    
+    # Ask for the number of apps and their names
+    num_apps = int(input("How many apps do you want to create? "))
+    app_names = []
+    for _ in range(num_apps):
+        app_name = input("Enter the name of the app: ")
+        app_names.append(app_name)
+        subprocess.run(["django-admin", "startapp", app_name])
 
-def create_django_app(app_name):
-    print("1r1r1r1r1rr1r1r1rr1rr")
-
-    print(os.getcwd())
-    print(django.get_version())
-    print(app_name)
-    run_command(f'python manage.py startapp {app_name}')
-    print("2r2r2r2r1rr1r1r1rr1rr")
-
-def update_settings(app_names, project_name):
-    settings_path = os.path.join(project_name, 'settings.py')
+    # Update the settings.py file to include the new apps
+    settings_path = os.path.join(project_name, "settings.py")
     with open(settings_path, 'r') as file:
-        settings = file.readlines()
-
-    installed_apps_index = None
-    for i, line in enumerate(settings):
-        if line.strip() == 'INSTALLED_APPS = [':
-            installed_apps_index = i
-            break
-
-    if installed_apps_index is None:
-        raise Exception("Couldn't find INSTALLED_APPS in settings.py")
-
-    for app_name in app_names:
-        app_entry = f"    '{app_name}',\n"
-        if app_entry not in settings:
-            settings.insert(installed_apps_index + 1, app_entry)
+        settings_content = file.readlines()
 
     with open(settings_path, 'w') as file:
-        file.writelines(settings)
-
-def main(project_name=None, num_apps=None, app_names=None):
-    run_command(f'pip install django')
-
-    if not project_name:
-        project_name = input("Enter the name of your Django project___: ")
-    create_django_project(project_name)
-
-    # if num_apps is None:
-    #     num_apps = int(input("How many apps do you want to create? "))
-    # if app_names is None:
-    #     app_names = ["ani"]
-    #     # for _ in range(num_apps):
-    #         # app_name = input("Enter the name of the app: ")
-    #     app_name=app_names[0]
-    #     create_django_app(app_name)
-    #     print("rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr")
-    #     print("rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr")
-    #     # app_names.append(app_name)
+        for line in settings_content:
+            file.write(line)
+            if line.strip() == 'INSTALLED_APPS = [':
+                for app_name in app_names:
+                    file.write(f"    '{app_name}',\n")
 
 
-    # update_settings(app_names, project_name)
-    # print(f"Successfully created project {project_name} with apps: {', '.join(app_names)}")
+
+def create_django_drf_project():
+    project_name = input("Enter the name of the Django project: ")
+    subprocess.run(["django-admin", "startproject", project_name])
+    
+    # Change to the project directory
+    os.chdir(project_name)
+    
+    # Ask for the number of apps and their names
+    num_apps = int(input("How many apps do you want to create? "))
+    app_names = []
+    for _ in range(num_apps):
+        app_name = input("Enter the name of the app: ")
+        app_names.append(app_name)
+        subprocess.run(["django-admin", "startapp", app_name])
+
+    # Update the settings.py file to include the new apps and DRF
+    settings_path = os.path.join(project_name, "settings.py")
+    with open(settings_path, 'r') as file:
+        settings_content = file.readlines()
+
+    with open(settings_path, 'w') as file:
+        for line in settings_content:
+            file.write(line)
+            if line.strip() == 'INSTALLED_APPS = [':
+                for app_name in app_names:
+                    file.write(f"    '{app_name}',\n")
+                file.write("    'rest_framework',\n")  # Add Django REST Framework
+
+    # Create serializers.py, views.py, and urls.py in each app for implementing DRF
+    for app_name in app_names:
+        app_path = os.path.join(app_name)
+        serializers_path = os.path.join(app_path, "serializers.py")
+        with open(serializers_path, 'w') as file:
+            file.write("from rest_framework import serializers\n")
+            file.write("from .models import YourModel\n\n")
+            file.write("class YourModelSerializer(serializers.ModelSerializer):\n")
+            file.write("    class Meta:\n")
+            file.write("        model = YourModel\n")
+            file.write("        fields = '__all__'\n")
+
+        views_path = os.path.join(app_path, "views.py")
+        with open(views_path, 'w') as file:
+            file.write("from rest_framework import viewsets\n")
+            file.write("from .models import YourModel\n")
+            file.write("from .serializers import YourModelSerializer\n\n")
+            file.write("class YourModelViewSet(viewsets.ModelViewSet):\n")
+            file.write("    queryset = YourModel.objects.all()\n")
+            file.write("    serializer_class = YourModelSerializer\n")
+
+        urls_path = os.path.join(app_path, "urls.py")
+        with open(urls_path, 'w') as file:
+            file.write("from django.urls import path\n\n")
+            file.write("urlpatterns = [\n")
+            file.write("    # Define your URL patterns here\n")
+            file.write("]\n")
+
+    print("Django DRF project setup completed.")
 
 if __name__ == "__main__":
-    main()
+    create_django_project()
+
+if __name__ == "__main__":
+    create_django_project()
+    create_django_drf_project()
+

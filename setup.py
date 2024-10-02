@@ -2,14 +2,21 @@ from setuptools import setup, find_packages
 from setuptools.command.install import install
 import subprocess
 
-class CustomInstallCommand(install):
-    def run(self):
-        install.run(self)
-        subprocess.check_call(['python', '-m', 'setup_django_apex.installer'])
+# class CustomInstallCommand(install):
+#     def run(self):
+#         # Custom pre-installation steps can go here
+#         install.run(self)
+#         # Custom post-installation steps can go here
+#         print("Custom installation steps completed.")
+#         subprocess.run(["echo", "Post-installation script executed."])
+
+# Read the license file
+with open('LICENSE') as f:
+    license_text = f.read()
 
 setup(
     name='setup_django_apex',
-    version='0.1.4',
+    version='0.1.10',
     author='Anirudha Udgirkar',
     author_email='anirudhaudgirkar.work.email@example.com',
     description='A library to set up Django projects with multiple apps',
@@ -25,12 +32,16 @@ setup(
     python_requires='>=3.6',
     install_requires=[
         'Django>=3.0',
-        'django>=3.0',
     ], 
-    extras_require={
-        'tests': ['pytest'],
+    # cmdclass={
+    #     'install': CustomInstallCommand,
+    # },
+    entry_points={
+        'console_scripts': [
+            'setup_django=setup_django_apex.installer:create_django_project',
+            'setup_django_drf=setup_django_apex.installer:create_django_drf_project',
+        ],
     },
-    cmdclass={
-        'install': CustomInstallCommand,
-    },
+    # Include license file
+    license=license_text,
 )
